@@ -128,10 +128,11 @@
 
   // hero : profondeur au scroll
   if (!reduce) {
-    gsap.to('.orb-text', { rotation: 140, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } });
-    gsap.to('.lockup', { yPercent: -18, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } });
-    $$('.float').forEach(f => gsap.to(f, { y: () => innerHeight * f.dataset.depth * -1.4, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } }));
-    gsap.to('.orb-photo img', { yPercent: -10, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } });
+    const art = { trigger: '.hero-art', start: 'top bottom', end: 'bottom top', scrub: .6 };
+    gsap.fromTo('.orb-text', { rotation: -20 }, { rotation: 35, ease: 'none', scrollTrigger: art });
+    gsap.to('.lockup', { yPercent: -10, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: .6 } });
+    $$('.float').forEach(f => gsap.fromTo(f, { y: () => f.dataset.depth * 160 }, { y: () => f.dataset.depth * -160, ease: 'none', scrollTrigger: art }));
+    gsap.fromTo('.orb-photo img', { yPercent: 4 }, { yPercent: -10, ease: 'none', scrollTrigger: art });
   }
 
   // polaroid qui se redresse
