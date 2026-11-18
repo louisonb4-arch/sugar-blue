@@ -54,47 +54,14 @@
     return tl;
   }
 
-  /* =========================================================
-     INTRO — la façade s'ouvre
-     ========================================================= */
-  const intro = $('#intro');
-  let introDone = false;
-  function finishIntro() {
-    if (introDone) return; introDone = true;
-    intro.classList.add('is-done');
-    body.classList.remove('is-intro');
-    lenis.start();
+  /* ---------- arrivée sur la page : le hero s'anime directement ---------- */
+  const introDone = true;
+  lenis.start();
+  requestAnimationFrame(() => {
+    gsap.delayedCall(.15, heroIn);
     ScrollTrigger.refresh();
     if (deep) lenis.scrollTo(deep, { offset: -gap(), immediate: true });
-  }
-
-  if (reduce || deep) {
-    gsap.to(intro, { opacity: 0, duration: reduce ? .6 : .3, onComplete: finishIntro });
-    heroIn();
-  } else {
-    gsap.set('#sign', { yPercent: -150, autoAlpha: 1, transformOrigin: '50% 0%' });
-    const tl = gsap.timeline({ delay: .25 });
-    tl.to('.intro-skip', { opacity: 1, duration: .5 }, .8)
-      .fromTo('.dl-ring', { '--a': '0deg' }, { '--a': '360deg', duration: 1.35, ease: 'power2.inOut' }, 0)
-      .to('.dl-sugar', { clipPath: 'inset(-10% -4% -10% -4%)', duration: 1.05, ease: 'power2.inOut' }, .45)
-      .to('.dl-blue', { clipPath: 'inset(-4% -4% -4% -4%)', duration: .85, ease: 'power3.out' }, 1.15)
-      .to('.dl-base', { opacity: 1, duration: .6 }, 1.6)
-      .to('#sign', { yPercent: 0, duration: 1.2, ease: 'elastic.out(1,.5)' }, 1.4)
-      .fromTo('#sign', { rotation: 16 }, { rotation: 0, duration: 2, ease: 'elastic.out(1.1,.28)' }, 1.4)
-      .to('.sign-card', { rotationY: 180, duration: .75, ease: 'power3.inOut' }, 2.75)
-      .to('#sign', { rotation: -5, duration: .2, ease: 'power1.out', yoyo: true, repeat: 1 }, 2.95)
-      .addLabel('open', 3.55)
-      .to('#sign', { yPercent: -160, duration: .7, ease: 'power3.in' }, 'open')
-      .to('.intro-skip', { opacity: 0, duration: .3 }, 'open')
-      .to('.door--l', { rotationY: 108, duration: 1.6, ease: 'power3.inOut' }, 'open+=.25')
-      .to('.door--r', { rotationY: -108, duration: 1.6, ease: 'power3.inOut' }, 'open+=.25')
-      .to('.door-shade', { opacity: .5, duration: 1.6, ease: 'power2.in' }, 'open+=.25')
-      .add(heroIn(), 'open+=.85')
-      .call(finishIntro, null, 'open+=1.7');
-    const skip = () => { if (tl.time() < tl.labels.open) tl.seek('open'); };
-    $('#skip').addEventListener('click', e => { e.stopPropagation(); skip(); });
-    intro.addEventListener('click', skip);
-  }
+  });
 
   /* =========================================================
      HEADER, MENU, DOCK, ANCRES
