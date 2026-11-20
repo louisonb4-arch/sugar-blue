@@ -28,7 +28,7 @@
 <link rel="preload" href="fonts/lobster-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/kumar-one-outline-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/jost-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=a1467db6">
+<link rel="stylesheet" href="css/style.css?v=83f63716">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"CafeOrCoffeeShop","name":"Sugar Blue Café","image":"img/devanture.jpg","telephone":"+33983241924","servesCuisine":["Café de spécialité","Brunch","Fait maison"],"priceRange":"10–20 €","address":{"@type":"PostalAddress","streetAddress":"4 rue de l'Arche Sèche","postalCode":"44000","addressLocality":"Nantes","addressCountry":"FR"},"geo":{"@type":"GeoCoordinates","latitude":47.2153281,"longitude":-1.5582419},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:00","closes":"17:00"}],"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.6","reviewCount":"641"},"sameAs":["https://www.instagram.com/sugarbluecafe_nantes/"],"foundingDate":"2014"}
 </script>
@@ -91,8 +91,13 @@
         <a class="btn btn--cream" href="#carte"><span>Voir la carte</span><svg><use href="#i-arrow"/></svg></a>
         <a class="btn btn--line" href="#infos"><span>Nous trouver</span></a>
       </div>
+      <ul class="moments h-fade" aria-label="Les moments de la journée">
+        <li><b>9h</b><span>Petit-déj</span></li>
+        <li><b>11h30</b><span>Déjeuner</span></li>
+        <li><b>15h</b><span>Goûter</span></li>
+      </ul>
     </div>
-    <div class="hero-art">
+    <div class="hero-art hero-art--orb">
       <div class="orb" id="orb">
         <svg class="orb-text" viewBox="0 0 400 400" aria-hidden="true">
           <defs><path id="circ" d="M200,200 m-176,0 a176,176 0 1,1 352,0 a176,176 0 1,1 -352,0"/></defs>
@@ -103,6 +108,16 @@
       <div class="float float--a" data-depth="-0.18"><img src="img/carrot-cake.jpg" width="662" height="886" alt=""></div>
       <div class="float float--b" data-depth="0.14"><img src="img/brioche-choco.jpg" width="762" height="760" alt=""></div>
       <div class="rating h-fade"><b>4,6</b><span><span class="stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></span>641 avis Google</span></div>
+    </div>
+    <div class="hero-art hero-art--dish">
+      <div class="dish" id="dish">
+        <svg class="dish-ring" viewBox="0 0 870 870" aria-hidden="true">
+          <defs><path id="dishPath" d="M435,435 m-418,0 a418,418 0 1,1 836,0 a418,418 0 1,1 -836,0"/></defs>
+          <circle cx="435" cy="435" r="400" class="dish-line"/>
+          <text><textPath href="#dishPath">BRIOCHE TOASTÉE · MASCARPONE VANILLE · PÂTE À TARTINER MAISON · NOISETTES GRILLÉES · SERVIE DE 9H À 11H30 · </textPath></text>
+        </svg>
+        <div class="dish-plate"><img src="img/plat-brioche.jpg" width="742" height="742" alt="Brioche toastée, crème mascarpone, pâte à tartiner maison et noisettes grillées, vue du dessus"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -316,6 +331,6 @@
 <script src="js/vendor/ScrollTrigger.min.js?v=2e3b8c36"></script>
 <script src="js/vendor/SplitText.min.js?v=6631fa05"></script>
 <script src="js/vendor/lenis.min.js?v=5a44a112"></script>
-<script src="js/main.js?v=0b768dde"></script>
+<script src="js/main.js?v=ec07cf23"></script>
 </body>
 </html>

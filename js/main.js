@@ -42,6 +42,8 @@
   gsap.set('.orb', { scale: .78, rotation: -40, opacity: 0 });
   gsap.set('.orb-photo', { clipPath: 'circle(0% at 50% 50%)' });
   gsap.set('.float', { scale: 0 });
+  gsap.set('.dish-plate', { scale: .82, rotation: -70, clipPath: 'circle(0% at 50% 50%)' });
+  gsap.set('.dish-ring', { opacity: 0, rotation: 40, scale: .94 });
 
   function heroIn() {
     const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
@@ -50,6 +52,9 @@
       .to('.orb', { scale: 1, rotation: 0, opacity: 1, duration: 1.6 }, .1)
       .to('.orb-photo', { clipPath: 'circle(70% at 50% 50%)', duration: 1.6, ease: 'power3.inOut' }, .2)
       .to('.float', { scale: 1, duration: 1.1, ease: 'back.out(1.6)', stagger: .12 }, .9)
+      .to('.dish-plate', { clipPath: 'circle(50% at 50% 50%)', duration: 1.5, ease: 'power3.inOut' }, .05)
+      .to('.dish-plate', { scale: 1, rotation: 0, duration: 2, ease: 'expo.out' }, .15)
+      .to('.dish-ring', { opacity: 1, rotation: 0, scale: 1, duration: 2, ease: 'expo.out' }, .55)
       .to('.h-fade', { y: 0, opacity: 1, duration: 1.1, stagger: .08 }, .6);
     return tl;
   }
@@ -128,11 +133,21 @@
 
   // hero : profondeur au scroll
   if (!reduce) {
-    const art = { trigger: '.hero-art', start: 'top bottom', end: 'bottom top', scrub: .6 };
-    gsap.fromTo('.orb-text', { rotation: -20 }, { rotation: 35, ease: 'none', scrollTrigger: art });
     gsap.to('.lockup', { yPercent: -10, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: .6 } });
-    $$('.float').forEach(f => gsap.fromTo(f, { y: () => f.dataset.depth * 160 }, { y: () => f.dataset.depth * -160, ease: 'none', scrollTrigger: art }));
-    gsap.fromTo('.orb-photo img', { yPercent: 4 }, { yPercent: -10, ease: 'none', scrollTrigger: art });
+    const mm = gsap.matchMedia();
+    // mobile : le cercle latte & brioche
+    mm.add('(max-width: 959px)', () => {
+      const art = { trigger: '.hero-art--orb', start: 'top bottom', end: 'bottom top', scrub: .6 };
+      gsap.fromTo('.orb-text', { rotation: -20 }, { rotation: 35, ease: 'none', scrollTrigger: art });
+      $$('.float').forEach(f => gsap.fromTo(f, { y: () => f.dataset.depth * 160 }, { y: () => f.dataset.depth * -160, ease: 'none', scrollTrigger: art }));
+      gsap.fromTo('.orb-photo img', { yPercent: 4 }, { yPercent: -10, ease: 'none', scrollTrigger: art });
+    });
+    // ordinateur : le plat reste à sa place et tourne sur lui-même, le texte tourne en sens inverse
+    mm.add('(min-width: 960px)', () => {
+      const turn = { trigger: hero, start: 'top top', end: 'bottom top', scrub: .9 };
+      gsap.fromTo('.dish-plate img', { rotation: 0 }, { rotation: 200, ease: 'none', scrollTrigger: turn });
+      gsap.fromTo('.dish-ring text', { rotation: 0 }, { rotation: -70, ease: 'none', svgOrigin: '435 435', scrollTrigger: turn });
+    });
   }
 
   // polaroid qui se redresse
