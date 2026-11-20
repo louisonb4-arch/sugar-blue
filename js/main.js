@@ -43,7 +43,7 @@
   gsap.set('.orb-photo', { clipPath: 'circle(0% at 50% 50%)' });
   gsap.set('.float', { scale: 0 });
   // ordinateur : BLUE géant
-  const fanCards = $$('.fp'), fanAngle = el => +el.dataset.r;
+  const fanCards = $$('.fp'), fanAngle = el => +el.dataset.r * (innerWidth < 960 ? .8 : 1);
   gsap.set(fanCards, { rotation: 0, yPercent: 40, opacity: 0 });
   gsap.set('#hbBadge', { scale: .4, rotation: -30, opacity: 0 });
   gsap.set('.hb-ring', { '--a': '0deg' });
@@ -151,15 +151,8 @@
   if (!reduce) {
     gsap.to('.lockup', { yPercent: -10, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: .6 } });
     const mm = gsap.matchMedia();
-    // mobile : le cercle latte & brioche
-    mm.add('(max-width: 959px)', () => {
-      const art = { trigger: '.hero-art--orb', start: 'top bottom', end: 'bottom top', scrub: .6 };
-      gsap.fromTo('.orb-text', { rotation: -20 }, { rotation: 35, ease: 'none', scrollTrigger: art });
-      $$('.float').forEach(f => gsap.fromTo(f, { y: () => f.dataset.depth * 160 }, { y: () => f.dataset.depth * -160, ease: 'none', scrollTrigger: art }));
-      gsap.fromTo('.orb-photo img', { yPercent: 4 }, { yPercent: -10, ease: 'none', scrollTrigger: art });
-    });
-    // ordinateur : l'éventail respire au repos et se referme derrière le badge au scroll
-    mm.add('(min-width: 960px)', () => {
+    // l'éventail respire au repos et se referme derrière le badge au scroll
+    mm.add('all', () => {
       const fan = $('#hbFan');
       let breathe = null, close = null;
       const start = () => {
@@ -300,7 +293,7 @@
      REFONTE ORDINATEUR
      ========================================================= */
   const dm = gsap.matchMedia();
-  dm.add('(min-width: 960px)', () => {
+  dm.add('all', () => {
     // histoire : les polaroids se posent
     gsap.from('.story-extra .tp', { y: -120, opacity: 0, rotation: (i) => i ? 30 : -30, duration: 1.4, ease: 'elastic.out(1,.6)', stagger: .15,
       scrollTrigger: { trigger: '.story-grid', start: 'top 70%', once: true } });
@@ -320,7 +313,26 @@
     gsap.fromTo('.hours-sign', { rotation: 14 }, { rotation: 0, duration: 2.4, ease: 'elastic.out(1.1,.25)',
       scrollTrigger: { trigger: '.hours-sign', start: 'top 85%', once: true } });
 
-    // comptoir : corde à linge qui défile à l'horizontale
+  });
+  // mobile : la corde à linge glisse au doigt, les photos se balancent
+  dm.add('(max-width: 959px)', () => {
+    const clothes = $('#clothes'), cards = $$('.cl-card');
+    let last = clothes.scrollLeft, lt = performance.now(), settle = null;
+    const onScroll = () => {
+      const now = performance.now(), v = (clothes.scrollLeft - last) / Math.max(1, now - lt);
+      last = clothes.scrollLeft; lt = now;
+      if (reduce) return;
+      gsap.to(cards, { '--rt': `${gsap.utils.clamp(-8, 8, v * -6)}deg`, duration: .35, ease: 'power2.out', overwrite: true });
+      settle && settle.kill();
+      settle = gsap.delayedCall(.12, () => gsap.to(cards, { '--rt': '0deg', duration: 1.6, ease: 'elastic.out(1,.3)', overwrite: true, stagger: .02 }));
+    };
+    clothes.addEventListener('scroll', onScroll, { passive: true });
+    gsap.from('.cl', { opacity: 0, rotation: -24, transformOrigin: '50% 0%', duration: 1.5, ease: 'elastic.out(1,.4)', stagger: .08,
+      scrollTrigger: { trigger: '#clothes', start: 'top 85%', once: true } });
+    return () => clothes.removeEventListener('scroll', onScroll);
+  });
+  // ordinateur : corde à linge qui défile à l'horizontale
+  dm.add('(min-width: 960px)', () => {
     const sec = $('#comptoir'), track = $('#clTrack'), clothes = $('#clothes'), cls = $$('.cl'), cards = $$('.cl-card');
     const dist = () => Math.max(0, track.scrollWidth - clothes.clientWidth);
     const ropeY = x => { const t = Math.min(1, Math.max(0, x / clothes.clientWidth)); return 1.2 * (100 * t * (1 - t)); };
