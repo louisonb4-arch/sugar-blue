@@ -394,3 +394,124 @@ a.info:hover{background:rgba(245,238,226,.13)}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;transition-delay:0s!important}
 }
+
+/* =========================================================
+   REFONTE ORDINATEUR — dans l'esprit de la hero (polaroids scotchés, badges ronds)
+   ========================================================= */
+.d-only{display:none}
+.tp{position:absolute;margin:0;background:#fff;padding:10px 10px 0;border-radius:4px;box-shadow:0 30px 50px -26px rgba(16,39,44,.6),0 1px 3px rgba(0,0,0,.08)}
+.tp::before{content:"";position:absolute;left:50%;top:-12px;width:84px;height:24px;margin-left:-42px;background:rgba(232,224,206,.78);transform:rotate(-4deg);box-shadow:0 1px 2px rgba(0,0,0,.08);z-index:2}
+.tp-ph{aspect-ratio:1/1.05;overflow:hidden;border-radius:2px;background:var(--blue)}
+.tp-ph img{width:100%;height:100%;object-fit:cover}
+.tp figcaption{font:400 20px/1 var(--f-script);color:var(--blue);text-align:center;padding:11px 0 14px;white-space:nowrap}
+
+@media (min-width:960px){
+  .d-only{display:block}
+  :root{--sec:150px}
+
+  /* ---------- HISTOIRE : bois bleu, trio de polaroids ---------- */
+  .story{background:var(--blue);color:var(--cream)}
+  .story::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;
+    background:repeating-linear-gradient(90deg,transparent 0 44px,rgba(0,0,0,.09) 44px 45.5px,rgba(255,255,255,.04) 45.5px 47px,transparent 47px 92px)}
+  .story .eyebrow{color:var(--mint)}
+  .story .title{color:var(--cream);max-width:14ch;font-size:clamp(56px,5.2vw,84px)}
+  .story .title .script{color:var(--mint)}
+  .story-body p{color:rgba(245,238,226,.8)}
+  .story-grid{position:relative;grid-template-columns:1fr 1fr;gap:60px;min-height:520px}
+  .polaroid{margin-top:60px!important}
+  .polaroid{position:relative;z-index:2;width:440px;margin:0 0 0 auto;transform:rotate(-4deg)}
+  .story-extra{position:absolute;inset:0;pointer-events:none}
+  .story-extra .tp{width:200px}
+  .tp--a{right:410px;top:-20px;transform:rotate(-12deg);z-index:1}
+  .tp--b{right:340px;bottom:-70px;transform:rotate(-7deg);z-index:3}
+  .stats{grid-template-columns:repeat(3,auto);justify-content:center;gap:70px;margin-top:120px}
+  .stats li{width:210px;height:210px;border-radius:50%;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--cream);box-shadow:0 30px 50px -26px rgba(0,0,0,.5),0 0 0 8px rgba(245,238,226,.12)}
+  .stats li:nth-child(2){background:var(--mint)}
+  .stats b{font-size:54px}
+  .stats li>span{margin-top:10px}
+
+  /* ---------- LA CARTE : la carte complète, comme un menu imprimé ---------- */
+  .carte{background:var(--cream)}
+  .carte-grid{display:block;position:relative}
+  .carte-intro{position:relative;top:auto;text-align:center;display:flex;flex-direction:column;align-items:center}
+  .carte-intro .eyebrow{justify-content:center}
+  .carte-intro .lead{margin-left:auto;margin-right:auto;text-align:center}
+  .tabs{display:none}
+  .carte-pics{position:absolute;inset:0;pointer-events:none}
+  .carte-pics .tp{width:210px}
+  .tp--c{left:20px;top:10px;transform:rotate(-9deg)}
+  .tp--d{right:20px;top:30px;transform:rotate(8deg)}
+  .sheet{margin-top:70px;padding:56px 56px 40px;display:grid;grid-template-columns:1fr 1fr 2fr;column-gap:56px;align-items:start}
+  #p3{column-count:2;column-gap:40px}
+  #p3 .pane-h{column-span:all}
+  #p3 .cat{break-after:avoid}
+  #p3 .row,#p3 .teas{break-inside:avoid}
+  .sheet .pane[hidden]{display:block!important}
+  .sheet .pane{position:relative}
+  .sheet .pane+.pane::before{content:"";position:absolute;left:-28px;top:0;bottom:0;border-left:1px dashed rgba(95,140,119,.4)}
+  .sheet .pane-h{padding-right:0}
+  .sheet-stamp{right:auto;left:50%;top:-58px;margin-left:-58px;width:116px;height:116px;transform:rotate(-8deg);font-size:23px;background:var(--blue)}
+  .fine--allergy{grid-column:1 / -1;text-align:center;margin-top:30px}
+
+  /* ---------- COMPTOIR : la corde à linge, défilement horizontal ---------- */
+  .counter{padding:0;min-height:calc(100svh - var(--gap) * 2);display:flex;flex-direction:column;justify-content:center}
+  .counter-grid{display:block;padding-top:110px}
+  .counter-copy{display:grid;grid-template-columns:1fr auto;align-items:end;column-gap:40px}
+  .counter-copy .eyebrow{grid-column:1}
+  .counter-copy .title{grid-column:1;margin-top:14px}
+  .counter-copy .lead{grid-column:2;grid-row:2;text-align:right;padding-bottom:14px}
+  .counter-copy .lead{margin-top:0;max-width:36ch}
+  .counter-copy .lead span{display:none}
+  .deck,.deck-ui{display:none!important}
+  .clothes{position:relative;height:clamp(340px,52svh,470px);margin-top:20px;overflow:hidden}
+  .rope{position:absolute;left:0;top:18px;width:100%;height:120px;overflow:visible}
+  .cl-track{position:absolute;left:0;top:0;height:100%;display:flex;gap:clamp(34px,3vw,56px);padding:0 var(--pad);will-change:transform}
+  .cl{position:relative;flex:none;margin:0;width:clamp(200px,15vw,250px);padding-top:calc(42px + 24px * var(--y,0));transform-origin:50% 0}
+  .cl-pin{position:absolute;left:50%;top:calc(30px + 24px * var(--y,0));width:14px;height:42px;margin-left:-7px;border-radius:3px;z-index:3;background:linear-gradient(90deg,#b8915f,#e4c79c 50%,#b8915f);box-shadow:0 2px 3px rgba(0,0,0,.3)}
+  .cl-card{background:#fffdf8;padding:10px 10px 0;border-radius:4px;box-shadow:0 30px 44px -24px rgba(0,0,0,.65);transform:rotate(var(--rt,0deg));transform-origin:50% 0;transition:transform .6s var(--ease)}
+  .cl:hover .cl-card{transform:rotate(0deg) translateY(-6px) scale(1.04)}
+  .cl-ph{aspect-ratio:1/1.05;overflow:hidden;border-radius:2px;background:var(--blue)}
+  .cl-ph img{width:100%;height:100%;object-fit:cover}
+  .cl figcaption{text-align:center;padding:12px 6px 14px;font:400 23px/1 var(--f-script);color:var(--blue)}
+  .cl figcaption small{display:block;margin-top:6px;font:700 9.5px/1 var(--f-cap);letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .cl-progress{display:none}
+
+  /* ---------- AVIS : la note dans un grand badge ---------- */
+  .reviews{background:var(--paper)}
+  .reviews-grid{grid-template-columns:auto 1fr;gap:90px}
+  .score{position:relative;width:500px;height:500px;border-radius:50%;background:var(--blue);color:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 50px 90px -40px rgba(11,54,64,.7),0 0 0 12px var(--paper),0 0 0 13.5px rgba(18,80,92,.18)}
+  .score .eyebrow{color:var(--mint)}
+  .score .eyebrow::before{display:none}
+  .score-n{font-size:190px;color:var(--cream);margin-top:6px;line-height:1}
+  .score-n span:nth-child(2){color:var(--mint)}
+  .score-meta{align-items:center;color:rgba(245,238,226,.75);margin-top:10px;text-align:center}
+  .score-ring{position:absolute;inset:-46px;width:calc(100% + 92px);height:calc(100% + 92px);overflow:visible;pointer-events:none}
+  .score-ring text{font:700 13.5px var(--f-cap);letter-spacing:.36em;fill:var(--blue)}
+  .quotes{gap:24px}
+  .quote{position:relative;background:#fff;border-radius:6px;padding:36px 34px 28px;box-shadow:0 30px 50px -30px rgba(16,39,44,.45);transform:rotate(-1.5deg)}
+  .quote::before{content:"";position:absolute;left:50%;top:-12px;width:92px;height:24px;margin-left:-46px;background:rgba(232,224,206,.85);transform:rotate(3deg)}
+  .quote--alt{background:var(--mint);transform:rotate(1.5deg) translateX(40px)}
+  .quote--alt p{color:var(--blue-deep)}
+  .quote--alt cite{color:var(--saged,#2f5a50)}
+  .guide{background:transparent}
+
+  /* ---------- INFOS : la pancarte des horaires ---------- */
+  .infos-grid{align-items:center}
+  .hours-sign{position:relative;margin-top:110px;max-width:440px;transform-origin:50% -40px}
+  .hs-cord{position:absolute;left:50%;top:-60px;width:150px;height:60px;margin-left:-75px}
+  .hs-cord::before,.hs-cord::after{content:"";position:absolute;bottom:0;width:1.5px;height:78px;background:#c9b48f;transform-origin:50% 100%}
+  .hs-cord::before{left:50%;transform:rotate(36deg)}
+  .hs-cord::after{left:50%;transform:rotate(-36deg)}
+  .hours-sign::before{content:"";position:absolute;left:50%;top:-66px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f4d9a6,#b07a33 60%,#6d4718);z-index:2}
+  .hs-title{position:absolute;left:0;right:0;top:-2px;z-index:2;text-align:center;font:400 34px/1 var(--f-script);color:var(--blue);padding-top:24px}
+  .hours{margin-top:0;background:var(--cream);color:var(--ink);border-radius:18px;padding:76px 30px 18px;box-shadow:0 40px 70px -30px rgba(0,0,0,.6)}
+  .hours div{border-bottom:1px dashed rgba(18,80,92,.2)}
+  .hours .off{color:#9aa4a5}
+  .hours .is-today{color:var(--blue)}
+  .hours .is-today span:first-child::after{background:var(--blue);color:var(--cream)}
+  .infos-photo{background:#fff;padding:12px 12px 52px;border-radius:5px;aspect-ratio:auto;height:auto;transform:rotate(3deg);box-shadow:0 40px 70px -30px rgba(0,0,0,.6);position:relative}
+  .infos-photo img{aspect-ratio:4/3.1;height:auto;border-radius:2px}
+  .infos-photo::after{content:"rue de l'Arche Sèche";position:absolute;left:0;right:0;bottom:14px;text-align:center;font:400 24px/1 var(--f-script);color:var(--blue)}
+  .infos-side{gap:22px}
+}
+@media (min-width:960px){.score-n{align-items:baseline}.score-n span:nth-child(2){font-family:var(--f-line);font-size:1em;margin:0 -.06em}}

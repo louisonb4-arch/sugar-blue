@@ -140,7 +140,7 @@
   });
 
   // les panneaux arrivent comme des cartes posées sur la table
-  if (!reduce) $$('.story,.carte,.counter,.reviews,.infos,.ftr').forEach(p => {
+  if (!reduce) $$('.story,.carte,.counter,.reviews,.infos,.ftr').filter(p => !(isDesk() && p.classList.contains('counter'))).forEach(p => {
     gsap.fromTo(p, { scale: .93, borderRadius: 64 }, {
       scale: 1, borderRadius: getComputedStyle(p).borderRadius, ease: 'none', transformOrigin: '50% 0%',
       scrollTrigger: { trigger: p, start: 'top bottom', end: 'top 40%', scrub: true }
@@ -295,6 +295,52 @@
       if (!reduce) gsap.to(cards[order[0]], { x: -26, rotation: ROT[order[0]] - 4, duration: .5, ease: 'power2.inOut', yoyo: true, repeat: 1, delay: 1.3 });
     }});
   })();
+
+  /* =========================================================
+     REFONTE ORDINATEUR
+     ========================================================= */
+  const dm = gsap.matchMedia();
+  dm.add('(min-width: 960px)', () => {
+    // histoire : les polaroids se posent
+    gsap.from('.story-extra .tp', { y: -120, opacity: 0, rotation: (i) => i ? 30 : -30, duration: 1.4, ease: 'elastic.out(1,.6)', stagger: .15,
+      scrollTrigger: { trigger: '.story-grid', start: 'top 70%', once: true } });
+    gsap.from('.stats li', { scale: 0, rotation: -40, duration: 1.2, ease: 'back.out(1.7)', stagger: .12,
+      scrollTrigger: { trigger: '.stats', start: 'top 85%', once: true } });
+    // carte : les photos scotchées arrivent
+    gsap.from('.carte-pics .tp', { y: 80, opacity: 0, rotation: (i) => i ? 24 : -24, duration: 1.3, ease: 'expo.out', stagger: .12,
+      scrollTrigger: { trigger: '.carte', start: 'top 60%', once: true } });
+    gsap.from('.sheet .pane', { y: 50, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: .12,
+      scrollTrigger: { trigger: '#sheet', start: 'top 80%', once: true } });
+    // avis : le texte tourne autour de la note
+    if (!reduce) gsap.fromTo('.score-ring', { rotation: -40 }, { rotation: 60, ease: 'none',
+      scrollTrigger: { trigger: '#avis', start: 'top bottom', end: 'bottom top', scrub: .8 } });
+    gsap.from('.quote', { y: 60, rotation: (i) => i ? 8 : -8, opacity: 0, duration: 1.2, ease: 'expo.out', stagger: .15,
+      scrollTrigger: { trigger: '.quotes', start: 'top 80%', once: true } });
+    // infos : la pancarte se balance en arrivant
+    gsap.fromTo('.hours-sign', { rotation: 14 }, { rotation: 0, duration: 2.4, ease: 'elastic.out(1.1,.25)',
+      scrollTrigger: { trigger: '.hours-sign', start: 'top 85%', once: true } });
+
+    // comptoir : corde à linge qui défile à l'horizontale
+    const sec = $('#comptoir'), track = $('#clTrack'), clothes = $('#clothes'), cls = $$('.cl'), cards = $$('.cl-card');
+    const dist = () => Math.max(0, track.scrollWidth - clothes.clientWidth);
+    const ropeY = x => { const t = Math.min(1, Math.max(0, x / clothes.clientWidth)); return 1.2 * (100 * t * (1 - t)); };
+    const hang = () => { const tx = gsap.getProperty(track, 'x'); cls.forEach(c => gsap.set(c, { y: ropeY(c.offsetLeft + tx + c.offsetWidth / 2) - 18 })); };
+    let settle = null;
+    const tl = gsap.to(track, { x: () => -dist(), ease: 'none', onUpdate: hang });
+    ScrollTrigger.create({
+      trigger: sec, start: () => `top ${gap()}px`, end: () => `+=${dist()}`, pin: true, anticipatePin: 1, scrub: .6, animation: tl, invalidateOnRefresh: true,
+      onUpdate(self) {
+        if (reduce) return;
+        const t = gsap.utils.clamp(-9, 9, self.getVelocity() / -140);
+        gsap.to(cards, { '--rt': `${t}deg`, duration: .5, ease: 'power2.out', overwrite: true, stagger: .012 });
+        settle && settle.kill();
+        settle = gsap.delayedCall(.15, () => gsap.to(cards, { '--rt': '0deg', duration: 1.8, ease: 'elastic.out(1,.28)', overwrite: true, stagger: .02 }));
+      }
+    });
+    hang();
+    gsap.from(cls, { opacity: 0, rotation: -28, transformOrigin: '50% 0%', duration: 1.6, ease: 'elastic.out(1,.4)', stagger: .07,
+      scrollTrigger: { trigger: '#clothes', start: 'top 85%', once: true }, onComplete: hang });
+  });
 
   /* ---------- mentions légales ---------- */
   const legal = $('#legal');
