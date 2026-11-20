@@ -43,11 +43,16 @@
   gsap.set('.orb-photo', { clipPath: 'circle(0% at 50% 50%)' });
   gsap.set('.float', { scale: 0 });
   // ordinateur : BLUE géant
-  const hdOut = SplitText.create('.hd-out', { type: 'chars', mask: 'chars' });
-  gsap.set(hdOut.chars, { yPercent: 105 });
-  gsap.set('.hd-sugar', { clipPath: 'inset(-30% 104% -40% -10%)' });
-  gsap.set('.hd-in', { y: 26, opacity: 0 });
-  gsap.set('.hd-echo', { x: '-.034em', y: '-.034em', opacity: 0 });
+  const fanCards = $$('.fp'), fanAngle = el => +el.dataset.r;
+  gsap.set(fanCards, { rotation: 0, yPercent: 40, opacity: 0 });
+  gsap.set('#hbBadge', { scale: .4, rotation: -30, opacity: 0 });
+  gsap.set('.hb-ring', { '--a': '0deg' });
+  gsap.set('.hb-sugar', { clipPath: 'inset(-10% 100% -10% -4%)' });
+  gsap.set('.hb-blue', { clipPath: 'inset(100% -4% -4% -4%)' });
+  gsap.set('.hb-base', { opacity: 0, y: 10 });
+  gsap.set('.hb-in', { y: 24, opacity: 0 });
+  const hbTag = SplitText.create('#hbTag', { type: 'words', mask: 'words' });
+  gsap.set(hbTag.words, { yPercent: 110 });
 
   function heroIn() {
     const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
@@ -56,12 +61,16 @@
       .to('.orb', { scale: 1, rotation: 0, opacity: 1, duration: 1.6 }, .1)
       .to('.orb-photo', { clipPath: 'circle(70% at 50% 50%)', duration: 1.6, ease: 'power3.inOut' }, .2)
       .to('.float', { scale: 1, duration: 1.1, ease: 'back.out(1.6)', stagger: .12 }, .9)
-      .to(hdOut.chars, { yPercent: 0, duration: 1.2, stagger: .09 }, .05)
-      .to('.hd-fill.is-on', { clipPath: 'inset(0% 0 0 0)', duration: 1.5, ease: 'power3.inOut' }, .75)
-      .to('.hd-echo', { x: 0, y: 0, opacity: .85, duration: 1.4, ease: 'expo.out' }, 1.15)
-      .to('.hd-sugar', { clipPath: 'inset(-30% -10% -40% -10%)', duration: 1.25, ease: 'power2.inOut' }, 1.35)
-      .to('.hd-in', { y: 0, opacity: 1, duration: 1.1, stagger: .08 }, 1.6)
-      .call(() => document.dispatchEvent(new Event('hero:ready')), null, 2.3)
+      .to('#hbBadge', { scale: 1, rotation: 0, opacity: 1, duration: 1.3, ease: 'back.out(1.5)' }, .05)
+      .to('.hb-ring', { '--a': '360deg', duration: 1.2, ease: 'power2.inOut' }, .35)
+      .to('.hb-sugar', { clipPath: 'inset(-10% -4% -10% -4%)', duration: .9, ease: 'power2.inOut' }, .65)
+      .to('.hb-blue', { clipPath: 'inset(-4% -4% -4% -4%)', duration: .8, ease: 'power3.out' }, 1.15)
+      .to('.hb-base', { opacity: 1, y: 0, duration: .6 }, 1.5)
+      .to(fanCards, { yPercent: 0, opacity: 1, duration: .5, ease: 'power2.out', stagger: { each: .05, from: 'center' } }, .9)
+      .to(fanCards, { rotation: i => fanAngle(fanCards[i]), duration: 1.6, ease: 'elastic.out(1,.62)', stagger: { each: .06, from: 'center' } }, 1.05)
+      .to(hbTag.words, { yPercent: 0, duration: 1.1, stagger: .045 }, 1.45)
+      .to('.hb-in', { y: 0, opacity: 1, duration: 1.1, stagger: .1 }, 1.7)
+      .call(() => document.dispatchEvent(new Event('hero:ready')), null, 2.6)
       .to('.h-fade', { y: 0, opacity: 1, duration: 1.1, stagger: .08 }, .6);
     return tl;
   }
@@ -149,33 +158,18 @@
       $$('.float').forEach(f => gsap.fromTo(f, { y: () => f.dataset.depth * 160 }, { y: () => f.dataset.depth * -160, ease: 'none', scrollTrigger: art }));
       gsap.fromTo('.orb-photo img', { yPercent: 4 }, { yPercent: -10, ease: 'none', scrollTrigger: art });
     });
-    // ordinateur : les photos du café défilent à travers les lettres
+    // ordinateur : l'éventail respire au repos et se referme derrière le badge au scroll
     mm.add('(min-width: 960px)', () => {
-      const word = $('.hd-word'), fills = $$('.hd-fill'), dots = $$('.hd-dots i'), capT = $('.hd-cap-t');
-      const NAMES = ['la façade bleue', 'latte & brioche', 'le carrot cake', 'la salade de saison'];
-      let cur = 0, timer = null, live = true;
-      // au scroll : le mot rétrécit un peu, Sugar se redresse (la photo reste fixe)
-      const sc = { trigger: hero, start: 'top top', end: 'bottom top', scrub: .8 };
-      gsap.fromTo(word, { scale: 1 }, { scale: .94, transformOrigin: '50% 100%', ease: 'none', scrollTrigger: sc });
-      gsap.fromTo('.hd-sugar', { rotation: -8, y: 0 }, { rotation: -2, y: -40, ease: 'none', scrollTrigger: sc });
-      // une nouvelle photo remonte dans les lettres toutes les 4 s
-      function next() {
-        if (!live || document.hidden) return schedule();
-        const prev = fills[cur]; cur = (cur + 1) % fills.length; const n = fills[cur];
-        fills.forEach(f => f.style.zIndex = f === n ? 2 : (f === prev ? 1 : 0));
-        gsap.fromTo(n, { clipPath: 'inset(100% 0 0 0)' }, { clipPath: 'inset(0% 0 0 0)', duration: 1.4, ease: 'power3.inOut',
-          onComplete: () => fills.forEach(f => { if (f !== n) gsap.set(f, { clipPath: 'inset(100% 0 0 0)' }); }) });
-        dots.forEach((d, i) => d.classList.toggle('is-on', i === cur));
-        gsap.to(capT, { y: -12, opacity: 0, duration: .3, ease: 'power2.in', onComplete: () => {
-          capT.textContent = NAMES[cur]; gsap.fromTo(capT, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: .6, ease: 'expo.out' }); } });
-        schedule();
-      }
-      function schedule() { timer = gsap.delayedCall(4, next); }
-      const st = ScrollTrigger.create({ trigger: hero, start: 'top top', end: 'bottom top', onToggle: self => live = self.isActive });
-      live = st.isActive || scrollY < hero.offsetHeight;
-      const start = () => { if (!reduce && !timer) schedule(); };
+      const fan = $('#hbFan');
+      let breathe = null, close = null;
+      const start = () => {
+        if (!reduce) breathe = gsap.to(fan, { rotation: 1.4, duration: 3.2, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+        close = gsap.timeline({ scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom 30%', scrub: .8 } })
+          .to(fanCards, { rotation: i => fanAngle(fanCards[i]) * .12, yPercent: 22, ease: 'none' }, 0)
+          .to('#hbBadge', { rotation: 12, scale: .94, ease: 'none' }, 0);
+      };
       document.addEventListener('hero:ready', start, { once: true });
-      return () => { timer && timer.kill(); };
+      return () => { breathe && breathe.kill(); close && close.kill(); };
     });
   }
 
