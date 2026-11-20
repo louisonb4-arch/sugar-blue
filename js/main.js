@@ -42,8 +42,12 @@
   gsap.set('.orb', { scale: .78, rotation: -40, opacity: 0 });
   gsap.set('.orb-photo', { clipPath: 'circle(0% at 50% 50%)' });
   gsap.set('.float', { scale: 0 });
-  gsap.set('.dish-plate', { scale: .82, rotation: -70, clipPath: 'circle(0% at 50% 50%)' });
-  gsap.set('.dish-ring', { opacity: 0, rotation: 40, scale: .94 });
+  // ordinateur : BLUE géant
+  const hdOut = SplitText.create('.hd-out', { type: 'chars', mask: 'chars' });
+  gsap.set(hdOut.chars, { yPercent: 105 });
+  gsap.set('.hd-sugar', { clipPath: 'inset(-30% 104% -40% -10%)' });
+  gsap.set('.hd-in', { y: 26, opacity: 0 });
+  gsap.set('.hd-echo', { x: '-.034em', y: '-.034em', opacity: 0 });
 
   function heroIn() {
     const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
@@ -52,9 +56,12 @@
       .to('.orb', { scale: 1, rotation: 0, opacity: 1, duration: 1.6 }, .1)
       .to('.orb-photo', { clipPath: 'circle(70% at 50% 50%)', duration: 1.6, ease: 'power3.inOut' }, .2)
       .to('.float', { scale: 1, duration: 1.1, ease: 'back.out(1.6)', stagger: .12 }, .9)
-      .to('.dish-plate', { clipPath: 'circle(50% at 50% 50%)', duration: 1.5, ease: 'power3.inOut' }, .05)
-      .to('.dish-plate', { scale: 1, rotation: 0, duration: 2, ease: 'expo.out' }, .15)
-      .to('.dish-ring', { opacity: 1, rotation: 0, scale: 1, duration: 2, ease: 'expo.out' }, .55)
+      .to(hdOut.chars, { yPercent: 0, duration: 1.2, stagger: .09 }, .05)
+      .to('.hd-fill.is-on', { clipPath: 'inset(0% 0 0 0)', duration: 1.5, ease: 'power3.inOut' }, .75)
+      .to('.hd-echo', { x: 0, y: 0, opacity: .85, duration: 1.4, ease: 'expo.out' }, 1.15)
+      .to('.hd-sugar', { clipPath: 'inset(-30% -10% -40% -10%)', duration: 1.25, ease: 'power2.inOut' }, 1.35)
+      .to('.hd-in', { y: 0, opacity: 1, duration: 1.1, stagger: .08 }, 1.6)
+      .call(() => document.dispatchEvent(new Event('hero:ready')), null, 2.3)
       .to('.h-fade', { y: 0, opacity: 1, duration: 1.1, stagger: .08 }, .6);
     return tl;
   }
@@ -142,11 +149,33 @@
       $$('.float').forEach(f => gsap.fromTo(f, { y: () => f.dataset.depth * 160 }, { y: () => f.dataset.depth * -160, ease: 'none', scrollTrigger: art }));
       gsap.fromTo('.orb-photo img', { yPercent: 4 }, { yPercent: -10, ease: 'none', scrollTrigger: art });
     });
-    // ordinateur : le plat reste à sa place et tourne sur lui-même, le texte tourne en sens inverse
+    // ordinateur : les photos du café défilent à travers les lettres
     mm.add('(min-width: 960px)', () => {
-      const turn = { trigger: hero, start: 'top top', end: 'bottom top', scrub: .9 };
-      gsap.fromTo('.dish-plate img', { rotation: 0 }, { rotation: 200, ease: 'none', scrollTrigger: turn });
-      gsap.fromTo('.dish-ring text', { rotation: 0 }, { rotation: -70, ease: 'none', svgOrigin: '435 435', scrollTrigger: turn });
+      const word = $('.hd-word'), fills = $$('.hd-fill'), dots = $$('.hd-dots i'), capT = $('.hd-cap-t');
+      const NAMES = ['la façade bleue', 'latte & brioche', 'le carrot cake', 'la salade de saison'];
+      let cur = 0, timer = null, live = true;
+      // au scroll : le mot rétrécit un peu, Sugar se redresse (la photo reste fixe)
+      const sc = { trigger: hero, start: 'top top', end: 'bottom top', scrub: .8 };
+      gsap.fromTo(word, { scale: 1 }, { scale: .94, transformOrigin: '50% 100%', ease: 'none', scrollTrigger: sc });
+      gsap.fromTo('.hd-sugar', { rotation: -8, y: 0 }, { rotation: -2, y: -40, ease: 'none', scrollTrigger: sc });
+      // une nouvelle photo remonte dans les lettres toutes les 4 s
+      function next() {
+        if (!live || document.hidden) return schedule();
+        const prev = fills[cur]; cur = (cur + 1) % fills.length; const n = fills[cur];
+        fills.forEach(f => f.style.zIndex = f === n ? 2 : (f === prev ? 1 : 0));
+        gsap.fromTo(n, { clipPath: 'inset(100% 0 0 0)' }, { clipPath: 'inset(0% 0 0 0)', duration: 1.4, ease: 'power3.inOut',
+          onComplete: () => fills.forEach(f => { if (f !== n) gsap.set(f, { clipPath: 'inset(100% 0 0 0)' }); }) });
+        dots.forEach((d, i) => d.classList.toggle('is-on', i === cur));
+        gsap.to(capT, { y: -12, opacity: 0, duration: .3, ease: 'power2.in', onComplete: () => {
+          capT.textContent = NAMES[cur]; gsap.fromTo(capT, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: .6, ease: 'expo.out' }); } });
+        schedule();
+      }
+      function schedule() { timer = gsap.delayedCall(4, next); }
+      const st = ScrollTrigger.create({ trigger: hero, start: 'top top', end: 'bottom top', onToggle: self => live = self.isActive });
+      live = st.isActive || scrollY < hero.offsetHeight;
+      const start = () => { if (!reduce && !timer) schedule(); };
+      document.addEventListener('hero:ready', start, { once: true });
+      return () => { timer && timer.kill(); };
     });
   }
 
